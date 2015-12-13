@@ -1,0 +1,17 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="android:Theme.DeviceDefault.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/Actionbar</item>
+    </style>
+
+    <style name="Actionbar" parent="android:Widget.ActionBar">
+        <item name="android:titleTextStyle">@style/ActionBar.Text</item>
+        <item name="android:background">#d09922</item>
+    </style>
+
+    <style name="ActionBar.Text" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:ellipsize">start</item>
+    </style>
+</resources>
