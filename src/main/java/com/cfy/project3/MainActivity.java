@@ -26,7 +26,8 @@ public class MainActivity extends Activity {
                     Toast.makeText(MainActivity.this,intent.getStringExtra("toastmsg"),Toast.LENGTH_SHORT).show();
                     break;
                 case 1:
-                    setButtonStatus(intent.getBooleanExtra("status",false));
+                    running = intent.getBooleanExtra("status",false);
+                    setButtonStatus(running);
                     break;
                 case 2:
                     tv_log.setText(intent.getStringExtra("state") + "\n");
@@ -70,7 +71,6 @@ public class MainActivity extends Activity {
                 else{
                     sendStartServer();
                 }
-                setButtonStatus(!running);
             }
         });
     }
@@ -91,6 +91,13 @@ public class MainActivity extends Activity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            if(!running) {
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+            }
+            else {
+                Toast.makeText(this,"you must stop the server first.",Toast.LENGTH_SHORT).show();
+            }
             return true;
         }
 

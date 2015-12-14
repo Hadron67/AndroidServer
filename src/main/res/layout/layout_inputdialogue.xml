@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textTitle"
+        android:id="@+id/img_container"
+        android:padding="10dip"
+        >
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:background="#ffffff"
+            android:id="@+id/edittext_content">
+            <requestFocus />
+        </EditText>
+
+    </FrameLayout>
+
+    <View
+        android:layout_height="1px"
+        android:layout_width="wrap_content"
+        android:background="?android:attr/listDivider"
+        android:layout_alignTop="@+id/buttons_export_img"
+
+        android:layout_alignLeft="@+id/img_container"
+        android:layout_alignStart="@+id/img_container"
+
+        android:layout_alignRight="@+id/img_container"
+        android:layout_alignEnd="@+id/img_container"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/img_container"
+        android:layout_alignLeft="@+id/img_container"
+        android:layout_alignStart="@+id/img_container"
+
+        android:layout_alignRight="@+id/img_container"
+        android:layout_alignEnd="@+id/img_container"
+        android:id="@+id/buttons_export_img"
+        >
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/toolbox_item_background"
+            android:id="@+id/btn_enter"
+            android:text="@string/text_enter"
+            android:textSize="15sp"
+            android:layout_weight="1"
+            android:textColor="#5d89ec"
+            />
+        <View
+            android:layout_width="1px"
+            android:layout_height="match_parent"
+            android:background="?android:attr/listDivider"
+            android:layout_weight="0"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/toolbox_item_background"
+            android:id="@+id/btn_cancel"
+            android:text="@string/text_cancel"
+            android:layout_weight="1"
+            android:textSize="15sp"
+            android:textColor="#5d89ec"
+            />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textTitle"
+        android:layout_marginTop="5dip"
+        android:layout_marginLeft="10dip"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:text="654654654"
+        />
+
+</RelativeLayout>

@@ -5,16 +5,19 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Binder;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
-import Server.Session;
+import Server.Connection;
+import Server.ServerConfig;
 import Server.WebServer;
 
 /**
@@ -28,18 +31,34 @@ public class WebserverService extends Service{
         public void onReceive(Context context, Intent intent) {
             switch(intent.getIntExtra("cmd",0)){
                 case 0:
-                    server.startService();
-                    sendMsg("Server started successfully.");
+                    try {
+                        server.startService();
+                    } catch (IOException e) {
+                        sendMsg("Failed to start server.");
+                        e.printStackTrace();
+                    }
                     sendState();
+                    sendStatus();
                     break;
                 case 1:
-                    server.stopService();
-                    sendMsg("Server stopped successfully.");
+                    try {
+                        server.stopService();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     sendState();
+                    sendStatus();
                     break;
                 case 2:
                     sendStatus();
                     sendState();
+                    break;
+                case 3:
+                    sendConfig();
+                    break;
+                case 4:
+                    Bundle b = intent.getExtras();
+                    server.setConfig((ServerConfig) b.getSerializable("new_config"));
                     break;
             }
         }
@@ -60,15 +79,27 @@ public class WebserverService extends Service{
         IntentFilter inf = new IntentFilter();
         inf.addAction("ServerCommand");
         registerReceiver(commandReceiver, inf);
-        server.setOnSessionEventListener(new WebServer.OnSessionEventListener() {
+        server.setOnConnectionEventListener(new WebServer.OnConnectionEventListener() {
             @Override
-            public void OnSessionStart(Session s) {
+            public void OnConnected(Connection s) {
                 sendState();
             }
 
             @Override
-            public void OnSessionStop(Session s) {
+            public void OnDisconnected(Connection s) {
                 sendState();
+            }
+        });
+        server.setMessageReceiver(new WebServer.MessageReceiver() {
+            @Override
+            public void OnReceive(String msg,int level) {
+                switch (level) {
+                    case 0:
+                        Log.d("web server", msg);
+                        break;
+                    case 1:
+                        sendMsg(msg);
+                }
             }
         });
 
@@ -82,7 +113,11 @@ public class WebserverService extends Service{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        server.stopService();
+        try {
+            server.stopService();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void sendMsg(String msg){
@@ -105,10 +140,10 @@ public class WebserverService extends Service{
         intent2.putExtra("result", 2);
         if(server.isRunning()) {
             String output = "port : " + server.getPort() + "\n";
-            ArrayList<Session> sessions = server.getSessions();
-            output += "Sessions : " + sessions.size() + "\n";
-            for (Session ss : sessions) {
-                output += ss.getIP() + "\n";
+            ArrayList<Connection> connections = server.getConnections();
+            output += "Connections : " + connections.size() + "\n";
+            for (Connection ss : connections) {
+                output += ss.getIP() + ":" + ss.getPort() + "\n";
             }
             intent2.putExtra("state", output);
         }
@@ -116,6 +151,14 @@ public class WebserverService extends Service{
             intent2.putExtra("state", "Server not running.");
         }
         sendBroadcast(intent2);
+    }
+
+    private void sendConfig(){
+        Intent intent = new Intent();
+        intent.setAction("ServerResult");
+        intent.putExtra("result",3);
+        intent.putExtra("config",server.getConfig());
+        sendBroadcast(intent);
     }
 
 

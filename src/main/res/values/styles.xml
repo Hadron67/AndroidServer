@@ -14,4 +14,18 @@
         <item name="android:textColor">#ffffff</item>
         <item name="android:ellipsize">start</item>
     </style>
+
+    <style name="Theme.server.List" parent="android:Widget.AbsListView">
+        <item name="android:listSelector">@drawable/list_item_background</item>
+        <item name="android:divider">@android:color/transparent</item>
+        <item name="android:dividerHeight">0dp</item>
+    </style>
+
+    <style name="Theme.server.InputDialogue" parent="android:style/Theme.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@drawable/dialogue_background</item>
+    </style>
+
+
+
 </resources>

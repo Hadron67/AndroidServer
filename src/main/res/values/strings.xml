@@ -7,4 +7,7 @@
     <string name="text_start">Start</string>
     <string name="text_stop">Stop</string>
 
+    <string name="text_enter">Enter</string>
+    <string name="text_cancel">Cancel</string>
+
 </resources>

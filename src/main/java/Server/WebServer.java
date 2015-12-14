@@ -1,9 +1,5 @@
 package Server;
 
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -13,56 +9,55 @@ import java.util.ArrayList;
  * Created by cfy on 15-12-13.
  */
 public class WebServer {
-    public interface OnSessionEventListener{
-        void OnSessionStart(Session s);
-        void OnSessionStop(Session s);
+    public interface OnConnectionEventListener {
+        void OnConnected(Connection s);
+        void OnDisconnected(Connection s);
+    }
+    public interface MessageReceiver{
+        void OnReceive(String msg,int level);
     }
 
-    private OnSessionEventListener msessionlistener = null;
+    private OnConnectionEventListener mConnectionlistener = null;
+
+    private MessageReceiver mMReceiver = null;
 
     private Socket client = null;
     private ServerSocket ssocket = null;
 
-    protected String root = "/";
 
-    private Handler handler = null;
-
-    private int count;
-    private int port;
+    protected ServerConfig config;
 
     private boolean isRunning = false;
 
-    private ArrayList<Session> sessions = null;
+    private ArrayList<Connection> connections = null;
 
     public WebServer(int port){
-        this.port = port;
-        sessions = new ArrayList<>();
+        connections = new ArrayList<>();
+
+        config = new ServerConfig();
+        config.LoadDefault();
+        config.port = port;
     }
 
-    public void setMessageHandler(Handler handler){
-        this.handler = handler;
+    public void setOnConnectionEventListener(OnConnectionEventListener listener){
+        this.mConnectionlistener = listener;
     }
-    public void setOnSessionEventListener(OnSessionEventListener listener){
-        this.msessionlistener = listener;
+
+    public void setMessageReceiver(MessageReceiver receiver){
+        this.mMReceiver = receiver;
     }
     public int getPort(){
-        return port;
+        return config.port;
     }
 
-    protected void sendmsg(String msg){
-        if(handler == null){
-            Log.d("Web server",msg);
-        }
-        else {
-            Message m = new Message();
-            m.what = 0;
-            m.obj = msg;
-            handler.sendMessage(m);
+    protected void sendmsg(String msg,int level){
+        if(mMReceiver != null){
+            mMReceiver.OnReceive(msg,level);
         }
     }
 
     public void chroot(String root){
-        this.root = root;
+        config.webRoot = root;
     }
 
     public boolean isRunning(){
@@ -70,69 +65,74 @@ public class WebServer {
     }
 
 
-    public void startService(){
+    public void startService() throws IOException {
+        ssocket = new ServerSocket(config.port);
+        sendmsg("server started successfully.",1);
         isRunning = true;
-        try {
-            ssocket = new ServerSocket(port);
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while(isRunning){
-                        try {
-                            client = ssocket.accept();
-                            Session s = new Session(WebServer.this,client);
-                            s.start();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(isRunning){
                     try {
-                        ssocket.close();
-                        client.close();
-                    }
-                    catch (IOException e){
+                        client = ssocket.accept();
+                        Connection s = new Connection(WebServer.this,client);
+                        if(config.maxConnections >=0 && connections.size() >= config.maxConnections){
+                            s.disConnect();
+                        }
+                        else {
+                            s.start();
+                        }
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    ssocket = null;
-                    client = null;
                 }
-            }).start();
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
+                try {
+                    ssocket.close();
+                    client.close();
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+                ssocket = null;
+                client = null;
+                sendmsg("server stopped.",1);
+            }
+        }).start();
     }
 
-    public void stopService(){
+    public void setConfig(ServerConfig config){
+        this.config = config;
+    }
+
+    public ServerConfig getConfig(){
+        return this.config.clone();
+    }
+
+    public void stopService() throws IOException {
         isRunning = false;
+        ssocket.close();
     }
 
-    protected void callOnSessionStart(Session s){
-        sessions.add(s);
-        if(msessionlistener != null){
-            msessionlistener.OnSessionStart(s);
+    protected void callOnSessionStart(Connection s){
+        connections.add(s);
+        if(mConnectionlistener != null){
+            mConnectionlistener.OnConnected(s);
         }
         else{
-            sendmsg("session started");
+            sendmsg("session started",0);
         }
     }
-    protected void callOnSessionStop(Session s){
-        sessions.remove(s);
-        if(msessionlistener != null){
-            msessionlistener.OnSessionStop(s);
+    protected void callOnSessionStop(Connection s){
+        connections.remove(s);
+        if(mConnectionlistener != null){
+            mConnectionlistener.OnDisconnected(s);
         }
         else{
-            sendmsg("session stoppped");
+            sendmsg("session stoppped",0);
         }
     }
 
-    public final ArrayList<Session> getSessions(){
-        return sessions;
-    }
-    private boolean containsSession(Session s){
-        for(Session ss : sessions){
-            if(ss.getIP().equals(ss.getIP())) return true;
-        }
-        return false;
+    public final ArrayList<Connection> getConnections(){
+        return connections;
     }
 }

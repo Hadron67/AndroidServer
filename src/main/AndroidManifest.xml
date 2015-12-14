@@ -24,6 +24,10 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".SettingsActivity">
+
+        </activity>
+
         <service android:name=".WebserverService">
             <intent-filter>
                 <action android:name="com.cfy.project3.webserverservice" />
