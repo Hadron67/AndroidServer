@@ -10,10 +10,17 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import Server.Connection;
@@ -34,7 +41,7 @@ public class WebserverService extends Service{
                     try {
                         server.startService();
                     } catch (IOException e) {
-                        sendMsg("Failed to start server.");
+                        sendMsg(getString(R.string.server_failed_to_start));
                         e.printStackTrace();
                     }
                     sendState();
@@ -59,26 +66,44 @@ public class WebserverService extends Service{
                 case 4:
                     Bundle b = intent.getExtras();
                     server.setConfig((ServerConfig) b.getSerializable("new_config"));
+                    try {
+                        SaveConfig(new File(serverRoot + "/.webserver"));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     break;
             }
         }
     };
 
+    private LocalBroadcastManager mbroadcastmanager = null;
 
     private WebServer server = null;
 
+    private String serverRoot = "/";
 
     private boolean stopped = false;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        server = new WebServer(8000);
-        server.chroot(Environment.getExternalStorageDirectory().getAbsolutePath() + "/webserver");
+        mbroadcastmanager = LocalBroadcastManager.getInstance(this);
+
+        serverRoot = Environment.getExternalStorageDirectory().getAbsolutePath() + "/webserver";
+
+        server = new WebServer();
+
+        try{
+            server.setConfig(LoadConfigFromFile(new File(serverRoot + "/.webserver")));
+        }
+        catch (Exception e){
+
+            server.chroot(serverRoot + "/www");
+        }
 
         IntentFilter inf = new IntentFilter();
         inf.addAction("ServerCommand");
-        registerReceiver(commandReceiver, inf);
+        mbroadcastmanager.registerReceiver(commandReceiver, inf);
         server.setOnConnectionEventListener(new WebServer.OnConnectionEventListener() {
             @Override
             public void OnConnected(Connection s) {
@@ -125,14 +150,14 @@ public class WebserverService extends Service{
         intent2.setAction("ServerResult");
         intent2.putExtra("result",0);
         intent2.putExtra("toastmsg", msg);
-        sendBroadcast(intent2);
+        mbroadcastmanager.sendBroadcast(intent2);
     }
     private void sendStatus(){
         Intent intent2 = new Intent();
         intent2.setAction("ServerResult");
         intent2.putExtra("result",1);
         intent2.putExtra("status",server.isRunning());
-        sendBroadcast(intent2);
+        mbroadcastmanager.sendBroadcast(intent2);
     }
     private void sendState(){
         Intent intent2 = new Intent();
@@ -148,9 +173,9 @@ public class WebserverService extends Service{
             intent2.putExtra("state", output);
         }
         else{
-            intent2.putExtra("state", "Server not running.");
+            intent2.putExtra("state", getString(R.string.server_not_running));
         }
-        sendBroadcast(intent2);
+        mbroadcastmanager.sendBroadcast(intent2);
     }
 
     private void sendConfig(){
@@ -158,7 +183,7 @@ public class WebserverService extends Service{
         intent.setAction("ServerResult");
         intent.putExtra("result",3);
         intent.putExtra("config",server.getConfig());
-        sendBroadcast(intent);
+        mbroadcastmanager.sendBroadcast(intent);
     }
 
 
@@ -172,4 +197,27 @@ public class WebserverService extends Service{
             super.handleMessage(msg);
         }
     };
+
+    private void initFiles(){
+        String path = Environment.getExternalStorageDirectory().toString();
+        File webserver = new File(path);
+        if(!webserver.exists() || !webserver.isDirectory()){
+            webserver.mkdir();
+        }
+        File www = new File(path + "/www");
+        if(!www.exists() || !www.isDirectory()){
+            www.mkdir();
+        }
+    }
+
+    private ServerConfig LoadConfigFromFile(File file) throws IOException, ClassNotFoundException {
+        ObjectInputStream is = new ObjectInputStream(new FileInputStream(file));
+        return (ServerConfig) is.readObject();
+    }
+
+    private void SaveConfig(File file) throws IOException {
+        ServerConfig config = server.getConfig();
+        ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(file));
+        os.writeObject(config);
+    }
 }

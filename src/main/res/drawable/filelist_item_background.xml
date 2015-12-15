@@ -5,9 +5,9 @@
             <solid android:color="#b8d725" />
         </shape>
     </item>
-    <item android:state_selected="true">
+    <item android:state_focused="true">
         <shape android:shape="rectangle">
-            <solid android:color="#b8d725" />
+            <solid android:color="#ffb8d725" />
         </shape>
     </item>
     <item android:state_pressed="false">

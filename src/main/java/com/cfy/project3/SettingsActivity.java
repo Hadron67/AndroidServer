@@ -6,8 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.PersistableBundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -15,10 +17,15 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
+import com.cfy.project3.settable.Error403PageSettable;
+import com.cfy.project3.settable.Error404PageSettable;
+import com.cfy.project3.settable.HomePageSettable;
+import com.cfy.project3.settable.MaxConnectionSettable;
+import com.cfy.project3.settable.PortSettable;
+import com.cfy.project3.settable.Settable;
+import com.cfy.project3.settable.WebRootSettable;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import Server.ServerConfig;
 
@@ -73,12 +80,38 @@ public class SettingsActivity extends Activity{
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            switch(intent.getIntExtra("result",3)){
-                case 3:
-                    Bundle b = intent.getExtras();
-                    config = (ServerConfig) b.getSerializable("config");
-                    sadapter.setConfigs(getSettables(config));
-                    break;
+            if(intent.getAction().equals("ServerResult")){
+                switch(intent.getIntExtra("result",3)){
+                    case 3:
+                        Bundle b = intent.getExtras();
+                        config = (ServerConfig) b.getSerializable("config");
+                        sadapter.setConfigs(getSettables(config));
+                        break;
+                }
+            }
+            else if(intent.getAction().equals("ChangeSettings")){
+                switch(intent.getIntExtra("which_setting",0)){
+                    case 0:
+                        String path = intent.getStringExtra("newValue");
+                        config.setWebRoot(path);
+                        sadapter.notifyDataSetChanged();
+                        break;
+                    case 1:
+                        String path2 = intent.getStringExtra("newValue");
+                        config.setError404Page(path2);
+                        sadapter.notifyDataSetChanged();
+                    case 2:
+                        String path3 = intent.getStringExtra("newValue");
+                        config.setError403Page(path3);
+                        sadapter.notifyDataSetChanged();
+                        break;
+                    case 3:
+                        String path4 = intent.getStringExtra("newValue");
+                        String h = path4.substring(config.getWebRoot().length(),path4.length());
+                        config.setHomepage(h);
+                        sadapter.notifyDataSetChanged();
+                        break;
+                }
             }
         }
     };
@@ -87,9 +120,12 @@ public class SettingsActivity extends Activity{
     private SettingsAdapter sadapter = null;
     private ServerConfig config = null;
 
+    private LocalBroadcastManager mbroadcastmanager = null;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mbroadcastmanager = LocalBroadcastManager.getInstance(this);
         setContentView(R.layout.layout_settings);
         list_settings = (ListView) findViewById(R.id.listview_settings);
         sadapter = new SettingsAdapter(this);
@@ -98,7 +134,7 @@ public class SettingsActivity extends Activity{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Settable sa = (Settable) parent.getAdapter().getItem(position);
-                sa.startSettingAction(SettingsActivity.this);
+                sa.startSettingAction();
             }
         });
 
@@ -106,35 +142,57 @@ public class SettingsActivity extends Activity{
 
         IntentFilter inf = new IntentFilter();
         inf.addAction("ServerResult");
-        registerReceiver(mReceiver, inf);
+        inf.addAction("ChangeSettings");
+        mbroadcastmanager.registerReceiver(mReceiver, inf);
 
         sendGetConfig();
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_settings,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.item_ok:
+                sendConfig();
+                finish();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(mReceiver);
-        sendConfig();
+        mbroadcastmanager.unregisterReceiver(mReceiver);
     }
 
     private ArrayList<Settable> getSettables(ServerConfig config){
         ArrayList<Settable> settables = new ArrayList<>();
-        settables.add(new PortSettable(config));
-        settables.add(new MaxConnectionSettable(config));
+        settables.add(new PortSettable(this,config));
+        settables.add(new WebRootSettable(this,config));
+        settables.add(new Error404PageSettable(this,config));
+        settables.add(new Error403PageSettable(this,config));
+        settables.add(new HomePageSettable(this,config));
+        settables.add(new MaxConnectionSettable(this,config));
         return settables;
     }
     private void sendGetConfig(){
         Intent intent = new Intent();
         intent.setAction("ServerCommand");
         intent.putExtra("cmd", 3);
-        sendBroadcast(intent);
+        mbroadcastmanager.sendBroadcast(intent);
     }
     private void sendConfig(){
         Intent intent = new Intent();
         intent.setAction("ServerCommand");
         intent.putExtra("cmd", 4);
         intent.putExtra("new_config",config);
-        sendBroadcast(intent);
+        mbroadcastmanager.sendBroadcast(intent);
     }
 }

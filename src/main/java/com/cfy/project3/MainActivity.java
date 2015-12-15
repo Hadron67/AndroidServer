@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,13 +41,15 @@ public class MainActivity extends Activity {
     private Button btn_control = null;
     private TextView tv_log = null;
 
-    private WebServer server = null;
 
     private boolean running = false;
+
+    private LocalBroadcastManager mbroadcastmanager = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mbroadcastmanager = LocalBroadcastManager.getInstance(this);
         setContentView(R.layout.activity_main);
         btn_control = (Button) findViewById(R.id.btn_control);
         tv_log = (TextView) findViewById(R.id.textview_servermessage);
@@ -54,7 +57,7 @@ public class MainActivity extends Activity {
 
         IntentFilter inf = new IntentFilter();
         inf.addAction("ServerResult");
-        registerReceiver(serverReceiver,inf);
+        mbroadcastmanager.registerReceiver(serverReceiver, inf);
 
         Intent intent = new Intent(this,WebserverService.class);
 
@@ -96,7 +99,7 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
             else {
-                Toast.makeText(this,"you must stop the server first.",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,getString(R.string.must_stop_server),Toast.LENGTH_SHORT).show();
             }
             return true;
         }
@@ -107,27 +110,27 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(serverReceiver);
+        mbroadcastmanager.unregisterReceiver(serverReceiver);
     }
 
     private void sendStartServer(){
         Intent intent = new Intent();
         intent.setAction("ServerCommand");
         intent.putExtra("cmd",0);
-        sendBroadcast(intent);
+        mbroadcastmanager.sendBroadcast(intent);
     }
 
     private void sendStopServer(){
         Intent intent = new Intent();
         intent.setAction("ServerCommand");
         intent.putExtra("cmd",1);
-        sendBroadcast(intent);
+        mbroadcastmanager.sendBroadcast(intent);
     }
     private void sendgetStatus(){
         Intent intent = new Intent();
         intent.setAction("ServerCommand");
         intent.putExtra("cmd",2);
-        sendBroadcast(intent);
+        mbroadcastmanager.sendBroadcast(intent);
     }
     private void setButtonStatus(boolean r){
         this.running = r;

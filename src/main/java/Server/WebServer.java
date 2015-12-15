@@ -31,12 +31,11 @@ public class WebServer {
 
     private ArrayList<Connection> connections = null;
 
-    public WebServer(int port){
+    public WebServer(){
         connections = new ArrayList<>();
 
         config = new ServerConfig();
         config.LoadDefault();
-        config.port = port;
     }
 
     public void setOnConnectionEventListener(OnConnectionEventListener listener){
@@ -67,7 +66,7 @@ public class WebServer {
 
     public void startService() throws IOException {
         ssocket = new ServerSocket(config.port);
-        sendmsg("server started successfully.",1);
+        sendmsg("server started successfully.",0);
         isRunning = true;
         new Thread(new Runnable() {
             @Override
@@ -95,7 +94,7 @@ public class WebServer {
                 }
                 ssocket = null;
                 client = null;
-                sendmsg("server stopped.",1);
+                sendmsg("server stopped.",0);
             }
         }).start();
     }

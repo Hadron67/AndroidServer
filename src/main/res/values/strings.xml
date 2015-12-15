@@ -10,4 +10,24 @@
     <string name="text_enter">Enter</string>
     <string name="text_cancel">Cancel</string>
 
+    <string name="parent_directory">..</string>
+
+    <string name="text_web_root">Web root</string>
+
+    <string name="server_failed_to_start">Failed to start server.</string>
+    <string name="must_stop_server">You must stop the server first.</string>
+    <string name="server_not_running">Server not running</string>
+
+    <string name="text_ok">OK</string>
+
+    <string name="error_404_page">Error 404 Page</string>
+    <string name="error_403_page">Error 403 Page</string>
+
+    <string name="home_page">Home page</string>
+
+    <string name="text_default">(default)</string>
+    <string name="text_use_default">use default</string>
+
+    <string name="pleas_choose_a_file">Please choose a file</string>
+
 </resources>

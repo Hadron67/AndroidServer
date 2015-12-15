@@ -1,4 +1,4 @@
-package com.cfy.project3;
+package com.cfy.project3.settable;
 
 import android.content.Context;
 
@@ -9,5 +9,5 @@ import android.content.Context;
 public interface Settable {
     String getName();
     String getValue();
-    void startSettingAction(Context ctx);
+    void startSettingAction();
 }

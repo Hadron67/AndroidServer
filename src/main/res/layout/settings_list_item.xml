@@ -13,11 +13,12 @@
         android:id="@+id/text_name"
         android:text="4444"/>
 
-    <TextView
+    <Views.MarqueenTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="#ffd0d0d0"
         android:textSize="17sp"
         android:id="@+id/text_value"
+        android:textStyle="italic"
         android:text="4444"/>
 </LinearLayout>

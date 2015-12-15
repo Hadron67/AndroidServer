@@ -21,6 +21,12 @@
         <item name="android:dividerHeight">0dp</item>
     </style>
 
+    <style name="Theme.server.List.Files" parent="android:Widget.AbsListView">
+        <item name="android:listSelector">@drawable/filelist_item_background</item>
+        <item name="android:divider">@android:color/transparent</item>
+        <item name="android:dividerHeight">0dp</item>
+    </style>
+
     <style name="Theme.server.InputDialogue" parent="android:style/Theme.Dialog">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@drawable/dialogue_background</item>
