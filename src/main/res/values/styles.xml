@@ -1,12 +1,14 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.DeviceDefault.Light.DarkActionBar">
-        <item name="android:actionBarStyle">@style/Actionbar</item>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="actionBarStyle">@style/Actionbar</item>
+        <item name="windowActionBarOverlay">false</item>
+        <item name="windowActionModeOverlay">true</item>
     </style>
 
     <style name="Actionbar" parent="android:Widget.ActionBar">
-        <item name="android:titleTextStyle">@style/ActionBar.Text</item>
+        <item name="titleTextStyle">@style/ActionBar.Text</item>
         <item name="android:background">#d09922</item>
     </style>
 
@@ -31,6 +33,10 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@drawable/dialogue_background</item>
     </style>
+
+    <style name="Toolbar.Server" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <style name="Toolbar.Server.Popup" parent="ThemeOverlay.AppCompat.Light"/>
+
 
 
 

@@ -1,28 +1,31 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" tools:context=".MainActivity">
-    <Button
-        android:layout_width="150dip"
-        android:layout_height="150dip"
-        android:background="@drawable/control_button_background"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="100dip"
-        android:text="@string/text_start"
-        android:textColor="#ffffff"
-        android:textSize="23sp"
-        android:id="@+id/btn_control" />
+<merge>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+        android:layout_height="match_parent" tools:context=".MainActivity">
+        <ImageButton
+            android:layout_width="150dip"
+            android:layout_height="150dip"
+            android:background="@drawable/control_button_background"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="100dip"
+            android:src="@mipmap/ic_start"
+            android:textColor="#ffffff"
+            android:textSize="23sp"
+            android:id="@+id/btn_control" />
 
-    <TextView
-        android:layout_width="230dip"
-        android:layout_height="123dip"
-        android:layout_below="@+id/btn_control"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/message_view_background"
-        android:layout_marginTop="80dp"
-        android:id="@+id/textview_servermessage"
-        android:padding="5dip"
-        android:scrollbars="vertical"
-        />
+        <TextView
+            android:layout_width="230dip"
+            android:layout_height="123dip"
+            android:layout_below="@+id/btn_control"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/message_view_background"
+            android:layout_marginTop="80dp"
+            android:id="@+id/textview_servermessage"
+            android:padding="5dip"
+            android:scrollbars="vertical"
+            />
 
-</RelativeLayout>
+    </RelativeLayout>
+    <include layout="@layout/toolbar" />
+</merge>

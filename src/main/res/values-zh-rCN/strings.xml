@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">服务器</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">设置</string>
+
+    <string name="text_start">开始</string>
+    <string name="text_stop">停止</string>
+
+    <string name="text_enter">确定</string>
+    <string name="text_cancel">取消</string>
+
+    <string name="parent_directory">..</string>
+
+    <string name="text_web_root">服务器根目录</string>
+
+    <string name="server_failed_to_start">启动服务器失败</string>
+    <string name="must_stop_server">请先关闭服务器</string>
+    <string name="server_not_running">服务器没有运行</string>
+
+    <string name="text_ok">确定</string>
+
+    <string name="error_404_page">404页面</string>
+    <string name="error_403_page">403页面</string>
+
+    <string name="home_page">主页面</string>
+
+    <string name="text_default">（默认）</string>
+    <string name="text_use_default">使用默认值</string>
+
+    <string name="pleas_choose_a_file">请选择一个文件</string>
+
+    <string name="please_input_number">请输入一个数字</string>
+    <string name="port_out_of_bounds">端口号越界</string>
+
+    <string name="text_port">端口号</string>
+    <string name="text_limitation">连接数限制</string>
+    <string name="limitation_hint">(-1　代表无限)</string>
+    <string name="text_infinity">无限</string>
+    <string name="invalid_value">无效数值，请重新输入</string>
+    <string name="text_settings">设置</string>
+    <string name="choose_a_directory">选择目录</string>
+    <string name="choose_a_file">选择文件</string>
+
+</resources>

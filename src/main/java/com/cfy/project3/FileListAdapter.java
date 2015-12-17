@@ -1,6 +1,8 @@
 package com.cfy.project3;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -25,6 +28,37 @@ public class FileListAdapter extends BaseAdapter{
     private boolean hasParent;
     private boolean limited = false;
     private String top = null;
+
+    private final Handler mhandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+
+
+            super.handleMessage(msg);
+        }
+    };
+
+    private static Comparator fileSorter = new Comparator() {
+        @Override
+        public int compare(Object lhs, Object rhs) {
+            File f1 = (File) lhs;
+            File f2 = (File) rhs;
+            String s1 = f1.getName();
+            String s2 = f2.getName();
+                if(f1.isDirectory() && f2.isDirectory()){
+                    return s1.compareTo(s2);
+                }
+                else if(f1.isDirectory()){
+                    return -1;
+                }
+                else if(f2.isDirectory()){
+                    return 1;
+                }
+                else{
+                    return s1.compareTo(s2);
+                }
+        }
+    };
 
     public FileListAdapter(Context ctx,File path){
         this.ctx = ctx;
@@ -40,6 +74,7 @@ public class FileListAdapter extends BaseAdapter{
         File[] f = path.listFiles();
         if(f != null)
             Collections.addAll(files,f);
+        Collections.sort(files,fileSorter);
 
         File parent = path.getParentFile();
 

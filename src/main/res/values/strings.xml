@@ -30,4 +30,16 @@
 
     <string name="pleas_choose_a_file">Please choose a file</string>
 
+    <string name="please_input_number">Please input a number.</string>
+    <string name="port_out_of_bounds">port out of bounds</string>
+
+    <string name="text_port">Port</string>
+    <string name="text_limitation">Limitation</string>
+    <string name="limitation_hint">(-1 for infinity)</string>
+    <string name="text_infinity">Infinity</string>
+    <string name="invalid_value">Invalid value</string>
+    <string name="text_settings">Settings</string>
+    <string name="choose_a_directory">Choose a directory</string>
+    <string name="choose_a_file">Choose a file</string>
+
 </resources>

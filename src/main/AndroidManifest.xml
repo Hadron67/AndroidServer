@@ -24,9 +24,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".SettingsActivity" />
-        <activity android:name=".DirectorySelectingActivity" />
-        <activity android:name=".FileChooseActivity" />
+        <activity android:name=".SettingsActivity" android:label="@string/text_settings"/>
+        <activity android:name=".DirectorySelectingActivity" android:label="@string/choose_a_directory"/>
+        <activity android:name=".FileChooseActivity" android:label="@string/choose_a_file"/>
 
         <service android:name=".WebserverService">
             <intent-filter>

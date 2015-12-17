@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,12 +19,14 @@ import java.io.File;
 /**
  * Created by cfy on 15-12-15.
  */
-public class FileChooseActivity extends Activity{
+public class FileChooseActivity extends AppCompatActivity{
 
     private ListView filelist = null;
     private TextView text_path = null;
     private FileListAdapter adapter = null;
     private LocalBroadcastManager mbroadcastmanager = null;
+
+    private Toolbar mToolbar = null;
 
     private int which_setting;
 
@@ -37,6 +41,9 @@ public class FileChooseActivity extends Activity{
 
         filelist = (ListView) findViewById(R.id.listview_files);
         text_path = (TextView) findViewById(R.id.textview_path);
+        mToolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        setSupportActionBar(mToolbar);
+
         adapter = new FileListAdapter(this,new File(path));
         adapter.setLimited(intent.getBooleanExtra("Locked", false));
         text_path.setText(path);
@@ -58,7 +65,7 @@ public class FileChooseActivity extends Activity{
 
 
     @Override
-    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+    public boolean onOptionsItemSelected( MenuItem item) {
         switch(item.getItemId()){
             case R.id.item_ok:
                 File f = new File(text_path.getText().toString());
@@ -76,7 +83,7 @@ public class FileChooseActivity extends Activity{
                 break;
         }
 
-        return super.onContextItemSelected(item);
+        return true;
     }
 
     private void sendResult(String s){

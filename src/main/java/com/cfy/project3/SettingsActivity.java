@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,7 +34,9 @@ import Server.ServerConfig;
 /**
  * Created by cfy on 15-12-14.
  */
-public class SettingsActivity extends Activity{
+public class SettingsActivity extends AppCompatActivity{
+    private Toolbar mToolbar = null;
+
     public class SettingsAdapter extends BaseAdapter{
         private ArrayList<Settable> configs = null;
 
@@ -100,6 +104,7 @@ public class SettingsActivity extends Activity{
                         String path2 = intent.getStringExtra("newValue");
                         config.setError404Page(path2);
                         sadapter.notifyDataSetChanged();
+                        break;
                     case 2:
                         String path3 = intent.getStringExtra("newValue");
                         config.setError403Page(path3);
@@ -128,6 +133,9 @@ public class SettingsActivity extends Activity{
         mbroadcastmanager = LocalBroadcastManager.getInstance(this);
         setContentView(R.layout.layout_settings);
         list_settings = (ListView) findViewById(R.id.listview_settings);
+        mToolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        setSupportActionBar(mToolbar);
+
         sadapter = new SettingsAdapter(this);
         list_settings.setAdapter(sadapter);
         list_settings.setOnItemClickListener(new AdapterView.OnItemClickListener() {

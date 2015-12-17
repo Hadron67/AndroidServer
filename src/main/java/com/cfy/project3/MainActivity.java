@@ -7,17 +7,22 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import Server.WebServer;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
+
+    private Toolbar mToolbar = null;
 
     private BroadcastReceiver serverReceiver = new BroadcastReceiver() {
         @Override
@@ -38,7 +43,7 @@ public class MainActivity extends Activity {
     };
 
 
-    private Button btn_control = null;
+    private ImageButton btn_control = null;
     private TextView tv_log = null;
 
 
@@ -49,11 +54,16 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         mbroadcastmanager = LocalBroadcastManager.getInstance(this);
         setContentView(R.layout.activity_main);
-        btn_control = (Button) findViewById(R.id.btn_control);
+        btn_control = (ImageButton) findViewById(R.id.btn_control);
         tv_log = (TextView) findViewById(R.id.textview_servermessage);
+        mToolbar = (Toolbar) findViewById(R.id.main_toolbar);
+
         tv_log.setMovementMethod(new ScrollingMovementMethod());
+
+        initActionbar();
 
         IntentFilter inf = new IntentFilter();
         inf.addAction("ServerResult");
@@ -113,6 +123,10 @@ public class MainActivity extends Activity {
         mbroadcastmanager.unregisterReceiver(serverReceiver);
     }
 
+    private void initActionbar(){
+        setSupportActionBar(mToolbar);
+    }
+
     private void sendStartServer(){
         Intent intent = new Intent();
         intent.setAction("ServerCommand");
@@ -135,10 +149,10 @@ public class MainActivity extends Activity {
     private void setButtonStatus(boolean r){
         this.running = r;
         if(r){
-            btn_control.setText(getString(R.string.text_stop));
+            btn_control.setImageResource(R.mipmap.ic_stop);
         }
         else{
-            btn_control.setText(getString(R.string.text_start));
+            btn_control.setImageResource(R.mipmap.ic_start);
         }
     }
 }

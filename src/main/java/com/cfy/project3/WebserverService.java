@@ -67,7 +67,7 @@ public class WebserverService extends Service{
                     Bundle b = intent.getExtras();
                     server.setConfig((ServerConfig) b.getSerializable("new_config"));
                     try {
-                        SaveConfig(new File(serverRoot + "/.webserver"));
+                        SaveConfig(new File(Environment.getExternalStorageDirectory() + "webserver/.webserver"));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -80,8 +80,6 @@ public class WebserverService extends Service{
 
     private WebServer server = null;
 
-    private String serverRoot = "/";
-
     private boolean stopped = false;
 
     @Override
@@ -89,16 +87,13 @@ public class WebserverService extends Service{
         super.onCreate();
         mbroadcastmanager = LocalBroadcastManager.getInstance(this);
 
-        serverRoot = Environment.getExternalStorageDirectory().getAbsolutePath() + "/webserver";
-
         server = new WebServer();
 
         try{
-            server.setConfig(LoadConfigFromFile(new File(serverRoot + "/.webserver")));
+            server.setConfig(LoadConfigFromFile(new File(Environment.getExternalStorageDirectory() + "/webserver/.webserver")));
         }
         catch (Exception e){
-
-            server.chroot(serverRoot + "/www");
+            server.chroot(Environment.getExternalStorageDirectory() + "/webserver");
         }
 
         IntentFilter inf = new IntentFilter();
@@ -166,11 +161,13 @@ public class WebserverService extends Service{
         if(server.isRunning()) {
             String output = "port : " + server.getPort() + "\n";
             ArrayList<Connection> connections = server.getConnections();
-            output += "Connections : " + connections.size() + "\n";
-            for (Connection ss : connections) {
-                output += ss.getIP() + ":" + ss.getPort() + "\n";
+            synchronized (connections) {
+                output += "Connections : " + connections.size() + "\n";
+                for (Connection ss : connections) {
+                    output += ss.getIP() + ":" + ss.getPort() + "\n";
+                }
+                intent2.putExtra("state", output);
             }
-            intent2.putExtra("state", output);
         }
         else{
             intent2.putExtra("state", getString(R.string.server_not_running));

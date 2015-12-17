@@ -4,6 +4,8 @@ import android.content.Context;
 import android.view.View;
 import android.widget.Toast;
 
+import com.cfy.project3.R;
+
 import Server.ServerConfig;
 import Views.InputDialogue;
 
@@ -22,20 +24,20 @@ public class MaxConnectionSettable implements Settable{
 
     @Override
     public String getName() {
-        return "Limitation";
+        return ctx.getString(R.string.text_limitation);
     }
 
     @Override
     public String getValue() {
         int m = config.getMaxConnections();
-        if(m == -1) return "Infinity";
+        if(m == -1) return ctx.getString(R.string.text_infinity);
         return Integer.toString(config.getMaxConnections());
     }
 
     @Override
     public void startSettingAction() {
         final InputDialogue diag = new InputDialogue(ctx);
-        diag.setTitle(getName() + " (-1 for infinity)");
+        diag.setTitle(getName() + " " + ctx.getString(R.string.limitation_hint));
         diag.setOnEnterClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -44,11 +46,11 @@ public class MaxConnectionSettable implements Settable{
                     maxConnections = Integer.parseInt(diag.getText());
                 }
                 catch (NumberFormatException e){
-                    Toast.makeText(ctx, "Please input a number.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ctx,ctx.getString(R.string.please_input_number), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(maxConnections < -1){
-                    Toast.makeText(ctx,"Invalid value.",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ctx,ctx.getString(R.string.invalid_value),Toast.LENGTH_SHORT).show();
                 }
                 else{
                     config.setMaxConnections(maxConnections);

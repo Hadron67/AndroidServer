@@ -11,11 +11,11 @@ import java.util.ArrayList;
  */
 public class ServerConfig implements Serializable,Cloneable{
     protected int port;
+
     protected String webRoot;
     protected String Error404Page;
     protected String Error403Page;
     protected String homepage;
-
     protected int maxConnections;
 
     public String getError404Page() {
@@ -44,7 +44,7 @@ public class ServerConfig implements Serializable,Cloneable{
 
     public void LoadDefault(){
         port = 8080;
-        webRoot = "/";
+        webRoot = "/webserver/www";
         maxConnections = -1;
         Error404Page = null;
         Error403Page = null;
@@ -58,16 +58,17 @@ public class ServerConfig implements Serializable,Cloneable{
     public int getPort(){
         return port;
     }
+
     public void setPort(int port){
         this.port = port;
     }
     public String getWebRoot(){
         return webRoot;
     }
-
     public void setWebRoot(String root){
         this.webRoot = root;
     }
+
     public int getMaxConnections(){
         return maxConnections;
     }
@@ -75,7 +76,6 @@ public class ServerConfig implements Serializable,Cloneable{
         if(c < -1) throw new java.lang.IllegalArgumentException("number of connections must be >= -1");
         this.maxConnections = c;
     }
-
     public ServerConfig clone(){
         try {
             return (ServerConfig) super.clone();
@@ -84,4 +84,5 @@ public class ServerConfig implements Serializable,Cloneable{
         }
         return null;
     }
+
 }

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/item_ok"
         android:title="@string/text_ok"
-        android:showAsAction="always" />
+        app:showAsAction="ifRoom"
+        android:icon="@mipmap/ic_ok"/>
     <item
         android:id="@+id/item_use_default"
-        android:showAsAction="never"
+        app:showAsAction="never"
         android:title="@string/text_use_default" />
 </menu>

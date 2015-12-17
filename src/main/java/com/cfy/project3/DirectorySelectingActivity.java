@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,11 +19,12 @@ import java.io.File;
  * Created by cfy on 15-12-15.
  *
  */
-public class DirectorySelectingActivity extends Activity{
+public class DirectorySelectingActivity extends AppCompatActivity{
 
     private ListView fileList = null;
     private FileListAdapter adapter = null;
     private TextView text_path = null;
+    private Toolbar mToolbar = null;
 
     private LocalBroadcastManager mbroadcastmanager = null;
 
@@ -34,6 +37,8 @@ public class DirectorySelectingActivity extends Activity{
         adapter = new FileListAdapter(this,new File(path));
         fileList = (ListView) findViewById(R.id.listview_files);
         text_path = (TextView) findViewById(R.id.textview_path);
+        mToolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        setSupportActionBar(mToolbar);
         text_path.setText(path);
 
         fileList.setAdapter(adapter);
@@ -55,7 +60,7 @@ public class DirectorySelectingActivity extends Activity{
     }
 
     @Override
-    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.item_ok:
                 String path = text_path.getText().toString();
@@ -63,7 +68,7 @@ public class DirectorySelectingActivity extends Activity{
                 finish();
                 break;
         }
-        return super.onMenuItemSelected(featureId, item);
+        return true;
     }
 
     private void sendPath(String path){
